@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Generate skeleton for a new Galaxy tutorial{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <p>Using a workflow, you can generate the skeleton of a new tutorial. 
+        All steps of the workflow will be listed with the tool and its parameters. 
+        If a Zenodo URL is provided, the links to the data there will be added to the tutorial.
+    </p>
+    <form method="post">
+        <div class="field">
+            <label for="name" class="label">Tutorial name</label>
+            <div class="control">
+                <input name="name" class="input" type="text" placeholder="tutorial" required>
+                <p class="help">The name will be the name of the folder of the tutorial</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="title" class="label">Tutorial title</label>
+            <div class="control">
+                <input name="title" class="input" type="text" placeholder="The best tutorial">
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="galaxy_url" class="label">Galaxy instance with the public workflow</label>
+            <div class="control">
+                <div class="select">
+                    <select name="galaxy_url">
+                        <option>usegalaxy.eu</option>
+                        <option>usegalaxy.org</option>
+                        <option>usegalaxy.org.au</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="workflow_id" class="label">Id of the workflow</label>
+            <div class="control">
+                <input name="workflow_id" class="input" type="text" placeholder="" required>
+                <p class="help">The workflow should be public on the Galaxy instance. The id can be found on URL of the workflow when running it.</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="zenodo" class="label">Zenodo URL with the input data</label>
+            <div class="control">
+                <input name="zenodo" class="input" type="text" placeholder="">
+            </div>
+        </div>
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link" type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+
+    {% if zip_fp %}
+    <h1><i class="fas fa-grin-stars"></i>
+        The skeleton of the tutorial has been generated.
+    </h1>
+
+    <p>To add it to the <a href="https://training.galaxyproject.org/">Galaxy Training Material</a>:
+
+    <ul>
+        <li>Download the <a href="{{ zip_fp }}"><i class="fas fa-file-archive"></i> generated archive with the tutorial skeleton</a> including:
+            <ul>
+                <li>tutorial content, <code>tutorial.md</code> file, filled with all steps from the workflow and their parameters</li>
+                <li>its workflow (<code>workflow</code> folder)</li>
+                <li>a <code>data_library.yaml</code> file if Zenodo link was provided</li>
+            </ul>
+        <li>Clone the <a href="https://github.com/galaxyproject/training-material">GitHub repository</a> of the Training Material (check out our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/github-command-line-contribution/tutorial.html">tutorial on how to contribute to GitHub</a>)</li>
+        <li>Move the Training Material folder</li>
+        <li>Unzip the downloaded archive in the <code>tutorials</code> folder of the topic for the new tutorial</li>
+        <li>Edit the <code>tutorial.md</code> file and fill the content (check our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/create-new-tutorial-content/tutorial.html">tutorial on how to write tutorials</a>)</li>
+    </ul>
+
+    <p>Several <a href="https://training.galaxyproject.org/training-material/topics/contributing/">other tutorials</a> explain the process to create training material.</p>
+    {% endif %}
+
+{% endblock %}

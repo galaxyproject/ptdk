@@ -1,0 +1,4 @@
+include ptdk/schema.sql
+graft ptdk/static
+graft ptdk/templates
+global-exclude *.pyc

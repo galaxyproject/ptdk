@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Planemo Training Development Kit</title>
+        <link href="{{ url_for('static', filename='css/bulma.min.css') }}" rel="stylesheet" type="text/css">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </head>
+    <body>
+        <section class="content">
+            <div class="container content ">
+                <header>
+                  {% block header %}{% endblock %}
+                </header>
+                {% for message in get_flashed_messages() %}
+                  <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {% block content %}{% endblock %}
+            </div>
+        </section>
+        <footer class="footer">
+              <div class="container content">
+                <div class="columns">
+                  <div class="column">
+                    <p>
+                      <i class="fab fa-github"></i>
+                      <a href="https://github.com/bebatut/ptdk">
+                        bebatut/ptdk
+                      </a>
+                      <br />
+                      <i class="fab fa-gitter"></i>
+                      Discuss with us on
+                      <a href="https://gitter.im/Galaxy-Training-Network/Lobby">Gitter</a>
+                      <br />
+                      <br />
+                      <br />
+                  </div>
+                  <div class="column is-5">
+                    <p>
+                      If you want to report a problem or suggest an enhancement we'd love
+                      for you to
+                      <a href="https://github.com/bebatut/ptdk/issues/new">open an issue</a>
+                      on our GitHub repository because then we can get right on it.
+                    </p>
+                  </div>
+                </div>
+              </div>
+          </footer>
+    </body>
+
+</html>
+
+
