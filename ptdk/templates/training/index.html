@@ -65,7 +65,7 @@
         The skeleton of the tutorial has been generated.
     </h1>
 
-    <p>To add it to the <a href="https://training.galaxyproject.org/">Galaxy Training Material</a>:
+    <p>You can now add it to the <a href="https://training.galaxyproject.org/">Galaxy Training Material</a>!</p>
 
     <ul>
         <li>Download the <a href="{{ zip_fp }}"><i class="fas fa-file-archive"></i> generated archive with the tutorial skeleton</a> including:
@@ -74,11 +74,44 @@
                 <li>its workflow (<code>workflow</code> folder)</li>
                 <li>a <code>data_library.yaml</code> file if Zenodo link was provided</li>
             </ul>
-        <li>Clone the <a href="https://github.com/galaxyproject/training-material">GitHub repository</a> of the Training Material (check out our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/github-command-line-contribution/tutorial.html">tutorial on how to contribute to GitHub</a>)</li>
-        <li>Move the Training Material folder</li>
-        <li>Unzip the downloaded archive in the <code>tutorials</code> folder of the topic for the new tutorial</li>
-        <li>Edit the <code>tutorial.md</code> file and fill the content (check our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/create-new-tutorial-content/tutorial.html">tutorial on how to write tutorials</a>)</li>
+        <li>Create a <a href="https://github.com/">GitHub account</a></li>
     </ul>
+
+    <p>To add the new tutorial to the <a href="https://github.com/galaxyproject/training-material">GitHub repository</a> of the Galaxy Training Material,
+    2 ways are possible now:</p>
+
+    <ul>
+        <li>Using the GitHub interface only
+            <ul>
+                <li>Unzip the downloaded archive</li>
+                <li>Go to the <a href="https://github.com/galaxyproject/training-material">GitHub repository</a> of the Training Material</li>
+                <li>Fork the GitHub repository</li>
+                <li>Click on <code>topics</code></li>
+                <li>Select the topic for the new tutorial</li>
+                <li>Go to <code>tutorials</code></li>
+                <li>Click on <strong>Create new file</strong></li>
+                <li>Type <code>name/tutorial.md</code>, replacing "name" by the name of your tutorial (not the title)</li>
+                <li>Copy the content of downloaded <code>tutorial.md</code> file there</li>
+                <li>Edit the file and fill the content (check our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/create-new-tutorial-content/tutorial.html">tutorial on how to write tutorials</a>)</li>
+                <li>Fill the <strong>Commit new file</strong> form</li>
+                <li>Create a new branch using the name of the tutorial</li>
+                <li>Click on <strong>Propose new file</strong></li>
+                <li>Open a Pull Request, as explained in our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/github-interface-contribution/tutorial.html#open-a-pull-request">tutorial</a></li>
+                <li>Add the workflow file (in <code>workflow</code> folder) by updating the Pull Request, as explained in our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/github-interface-contribution/tutorial.html#update-a-pull-request">tutorial</a></li>
+            </ul>
+        </li>
+        
+        <li>Using the command-line (check out our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/github-command-line-contribution/tutorial.html">tutorial on how to contribute to GitHub</a>)
+            <ul>
+                <li>Clone the <a href="https://github.com/galaxyproject/training-material">GitHub repository</a> of the Training Material locally</li>
+                <li>Move the Training Material folder</li>
+                <li>Unzip the downloaded archive in the <code>tutorials</code> folder of the topic for the new tutorial</li>
+                <li>Edit the <code>tutorial.md</code> file and fill the content (check our <a href="https://training.galaxyproject.org/training-material/topics/contributing/tutorials/create-new-tutorial-content/tutorial.html">tutorial on how to write tutorials</a>)</li>
+            </ul>
+        </li>
+    </ul>
+
+    <p>In both cases, you should change the contributors listed in the metadata of the new tutorial (using their GitHub id) and add the missing one to <code>CONTRIBUTORS.yaml</code> file.</p>
 
     <p>Several <a href="https://training.galaxyproject.org/training-material/topics/contributing/">other tutorials</a> explain the process to create training material.</p>
     {% endif %}
