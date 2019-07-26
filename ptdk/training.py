@@ -1,10 +1,12 @@
 import functools
-import yaml
 import shutil
+import uuid
+import yaml
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from pathlib import Path
 from planemo import cli
 from planemo.training import Training
 from ptdk.db import get_db
@@ -23,6 +25,7 @@ def index():
     '''Get tutorial attributes'''
     if request.method == 'POST':
         tuto = {
+            'uuid': str(uuid.uuid4())[:8],
             'name': request.form['name'],
             'title': request.form['title'],
             'galaxy_url': request.form['galaxy_url'],
@@ -47,8 +50,8 @@ def index():
             tuto['status'] = 'in creation'
 
             db.execute(
-                'INSERT INTO tutorials (name, title, galaxy_url, workflow_id, zenodo, status) VALUES (?, ?, ?, ?, ?, ?)',
-                (tuto['name'], tuto['title'], tuto['galaxy_url'], tuto['workflow_id'], tuto['zenodo'], tuto['status'])
+                'INSERT INTO tutorials (uuid, name, title, galaxy_url, workflow_id, zenodo, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (tuto['uuid'], tuto['name'], tuto['title'], tuto['galaxy_url'], tuto['workflow_id'], tuto['zenodo'], tuto['status'])
             )
             db.commit()
             zip_fp = generate(tuto)
@@ -86,12 +89,15 @@ def generate(tuto):
     ctx.planemo_directory = "/tmp/planemo-test-workspace"
     train.init_training(ctx)
 
-    zip_fp = "/static/%s" % (tuto['name'])
-    dir_path = "topics/topic/tutorials/%s" % (tuto['name'])
-    shutil.make_archive("ptdk/%s" % zip_fp, 'zip', dir_path)
+    zip_fn = "%s" % (tuto['uuid'])
+    dir_path = Path("topics") / Path("topic") / Path("tutorials") / Path("%s" % tuto['name'])
+    shutil.make_archive(Path(zip_fn), 'zip', dir_path)
+
+    zip_fp = Path('static') / Path("%s.zip" % zip_fn)
+    shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
 
     shutil.rmtree('topics', ignore_errors=True)
     shutil.rmtree('metadata', ignore_errors=True)
 
-    return "%s.zip" % zip_fp
+    return zip_fp
 
