@@ -20,46 +20,18 @@ with open("config.yaml", "r") as stream:
     config = yaml.load(stream, Loader=yaml.FullLoader)
 
 
-@tuto.route('/', methods=('GET','POST'))
-def index():
-    '''Get tutorial attributes'''
-    if request.method == 'POST':
-        tuto = {
-            'uuid': str(uuid.uuid4())[:8],
-            'name': request.form['name'],
-            'title': request.form['title'],
-            'galaxy_url': request.form['galaxy_url'],
-            'workflow_id': request.form['workflow_id'],
-            'zenodo': request.form['zenodo']
-        }
-        db = get_db()
-        error = None
-
-        if not tuto['galaxy_url']:
-            error = 'Galaxy URL is required.'
-        elif not tuto['workflow_id']:
-            error = 'Workflow id is required.'
-        elif not tuto['name']:
-            error = 'Name for tutorial is required.'
-        elif tuto['galaxy_url'] not in config:
-            error = 'No API key for this Galaxy instance.'
-        
-        tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
-            
-        if error is None:
-            tuto['status'] = 'in creation'
-
-            db.execute(
-                'INSERT INTO tutorials (uuid, name, title, galaxy_url, workflow_id, zenodo, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (tuto['uuid'], tuto['name'], tuto['title'], tuto['galaxy_url'], tuto['workflow_id'], tuto['zenodo'], tuto['status'])
-            )
-            db.commit()
-            zip_fp = generate(tuto)
-            return render_template('training/index.html', zip_fp=zip_fp)
-
-        flash(error)
-
-    return render_template('training/index.html')
+def check_metadata(tuto):
+    '''Check the metadata for a tutorial'''
+    error = None
+    if not tuto['galaxy_url']:
+        error = 'Galaxy URL is required.'
+    elif not tuto['workflow_id']:
+        error = 'Workflow id is required.'
+    elif not tuto['name']:
+        error = 'Name for tutorial is required.'
+    elif tuto['galaxy_url'] not in config:
+        error = 'No API key for this Galaxy instance.'
+    return error
 
 
 def generate(tuto):
@@ -101,3 +73,33 @@ def generate(tuto):
 
     return zip_fp
 
+
+@tuto.route('/', methods=('GET','POST'))
+def index():
+    '''Get tutorial attributes'''
+    if request.method == 'POST':
+        tuto = {
+            'uuid': str(uuid.uuid4())[:8],
+            'name': request.form['name'],
+            'title': request.form['title'],
+            'galaxy_url': request.form['galaxy_url'],
+            'workflow_id': request.form['workflow_id'],
+            'zenodo': request.form['zenodo']
+        }
+        error = check_metadata(tuto)
+
+        if error is None:
+            db = get_db()
+            tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
+            tuto['status'] = 'in creation'
+            db.execute(
+                'INSERT INTO tutorials (uuid, name, title, galaxy_url, workflow_id, zenodo, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (tuto['uuid'], tuto['name'], tuto['title'], tuto['galaxy_url'], tuto['workflow_id'], tuto['zenodo'], tuto['status'])
+            )
+            db.commit()
+            zip_fp = generate(tuto)
+            return render_template('training/index.html', zip_fp=zip_fp)
+
+        flash(error)
+
+    return render_template('training/index.html')
