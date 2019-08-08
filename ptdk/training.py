@@ -1,3 +1,4 @@
+import bioblend
 import functools
 import shutil
 import uuid
@@ -59,19 +60,42 @@ def generate(tuto):
 
     ctx = cli.Context()
     ctx.planemo_directory = "/tmp/planemo-test-workspace"
-    train.init_training(ctx)
 
-    zip_fn = "%s" % (tuto['uuid'])
+    error = None
+    try:
+        train.init_training(ctx)
+    except bioblend.ConnectionError as connect_error:
+        print(connect_error)
+        if "Malformed id" in connect_error.body:
+            error = "The id of the workflow is malformed for the given Galaxy instance."
+            error += "Please check it before trying again."
+        elif "not owned by or shared with current user" in connect_error.body:
+            error = "The workflow is not shared publicly on the given Galaxy instance."
+            error += "Please share it before trying again."
+        else:
+            error = connect_error.body
+
     dir_path = Path("topics") / Path("topic") / Path("tutorials") / Path("%s" % tuto['name'])
-    shutil.make_archive(Path(zip_fn), 'zip', dir_path)
+    tuto_fp = dir_path / Path('tutorial.md')
 
-    zip_fp = Path('static') / Path("%s.zip" % zip_fn)
-    shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
+    if error is None and not tuto_fp.is_file():
+        error = "The tutorial file was not generated. "
+        error += "The workflow may have some errors. "
+        error += "Please check it before trying again."
 
-    shutil.rmtree('topics', ignore_errors=True)
-    shutil.rmtree('metadata', ignore_errors=True)
+    if error is None:
+        zip_fn = "%s" % (tuto['uuid'])
+        shutil.make_archive(Path(zip_fn), 'zip', dir_path)
 
-    return zip_fp
+        zip_fp = Path('static') / Path("%s.zip" % zip_fn)
+        shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
+
+        shutil.rmtree('topics', ignore_errors=True)
+        shutil.rmtree('metadata', ignore_errors=True)
+
+        return zip_fp
+
+    return error
 
 
 @tuto.route('/', methods=('GET','POST'))
@@ -98,7 +122,10 @@ def index():
             )
             db.commit()
             zip_fp = generate(tuto)
-            return render_template('training/index.html', zip_fp=zip_fp)
+            if ".zip" in str(zip_fp):
+                return render_template('training/index.html', zip_fp=zip_fp)
+            else:
+                error = zip_fp
 
         flash(error)
 
