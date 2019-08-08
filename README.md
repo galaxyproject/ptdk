@@ -1,6 +1,8 @@
 ptdk: Web server to create tutorial skeleton from workflow
 ==========================================================
 
+[![CircleCI](https://circleci.com/gh/bebatut/ptdk/tree/master.svg?style=svg)](https://circleci.com/gh/bebatut/ptdk/tree/master)
+
 It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Material from a public workflow on a public Galaxy instance.
 
 # Usage

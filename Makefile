@@ -1,17 +1,13 @@
 # Location of virtualenv used for development.
 VENV?=.venv
-VENV3?=.venv3
 # Source virtualenv to execute command (flake8, sphinx, twine, etc...)
 ACTIVATE_ENV = . $(VENV)/bin/activate
+SHELL=bash
 
 default: help
 
-
 create-venv: ## create virtual env
-	if [! -d $(VENV)]; then \
-	    virtualenv $(VENV); && \
-		exit
-	fi
+	virtualenv $(VENV)
 
 setup: ## setup a development virtualenv in current directory
 	$(ACTIVATE_ENV) && \
@@ -33,7 +29,7 @@ run: ## run the server locally
 		flask run
 .PHONY: run
 
-test: ## run the tests
+test: ## run linting and tests
 	$(ACTIVATE_ENV) && \
 		pip install -e . && \
 		flake8 ptdk && \

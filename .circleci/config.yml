@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
+      - run:
+          name: create virtual env
+          command: |
+            python3 -m venv .venv
+      - run:
+          name: setup a development virtualenv in current directory
+          command: |
+            make setup
+      - run:
+          name: run linting and tests
+          command: |
+            make test
