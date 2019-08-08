@@ -1,21 +1,20 @@
 import bioblend
-import functools
 import shutil
 import uuid
 import yaml
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, render_template, request
 )
 from pathlib import Path
 from planemo import cli
 from planemo.training import Training
 from ptdk.db import get_db
-from werkzeug.security import check_password_hash, generate_password_hash
-from zipfile import ZipFile 
 
 
 tuto = Blueprint('training', __name__)
+topic_dp = Path("topics") / "topic" / "tutorials"
+
 
 with open("config.yaml", "r") as stream:
     config = yaml.load(stream, Loader=yaml.FullLoader)
@@ -67,25 +66,30 @@ def generate(tuto):
     except bioblend.ConnectionError as connect_error:
         print(connect_error)
         if "Malformed id" in connect_error.body:
-            error = "The id of the workflow is malformed for the given Galaxy instance."
-            error += "Please check it before trying again."
+            error = (
+                "The id of the workflow is malformed "
+                "for the given Galaxy instance. "
+                "Please check it before trying again.")
         elif "not owned by or shared with current user" in connect_error.body:
-            error = "The workflow is not shared publicly on the given Galaxy instance."
-            error += "Please share it before trying again."
+            error = (
+                "The workflow is not shared publicly "
+                "on the given Galaxy instance. "
+                "Please share it before trying again.")
         else:
             error = connect_error.body
 
-    dir_path = Path("topics") / Path("topic") / Path("tutorials") / Path("%s" % tuto['name'])
-    tuto_fp = dir_path / Path('tutorial.md')
+    tuto_dp = topic_dp / Path("%s" % tuto['name'])
+    tuto_fp = tuto_dp / Path('tutorial.md')
 
     if error is None and not tuto_fp.is_file():
-        error = "The tutorial file was not generated. "
-        error += "The workflow may have some errors. "
-        error += "Please check it before trying again."
+        error = (
+            "The tutorial file was not generated. "
+            "The workflow may have some errors. "
+            "Please check it before trying again.")
 
     if error is None:
         zip_fn = "%s" % (tuto['uuid'])
-        shutil.make_archive(Path(zip_fn), 'zip', dir_path)
+        shutil.make_archive(Path(zip_fn), 'zip', tuto_dp)
 
         zip_fp = Path('static') / Path("%s.zip" % zip_fn)
         shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
@@ -98,7 +102,7 @@ def generate(tuto):
     return error
 
 
-@tuto.route('/', methods=('GET','POST'))
+@tuto.route('/', methods=('GET', 'POST'))
 def index():
     '''Get tutorial attributes'''
     if request.method == 'POST':
@@ -115,10 +119,14 @@ def index():
         if error is None:
             db = get_db()
             tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
-            tuto['status'] = 'in creation'
             db.execute(
-                'INSERT INTO tutorials (uuid, name, title, galaxy_url, workflow_id, zenodo, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (tuto['uuid'], tuto['name'], tuto['title'], tuto['galaxy_url'], tuto['workflow_id'], tuto['zenodo'], tuto['status'])
+                ("INSERT INTO tutorials (uuid, name, galaxy_url, workflow_id) "
+                    "VALUES (?, ?, ?, ?)"),
+                (
+                    tuto['uuid'],
+                    tuto['name'],
+                    tuto['galaxy_url'],
+                    tuto['workflow_id'])
             )
             db.commit()
             zip_fp = generate(tuto)

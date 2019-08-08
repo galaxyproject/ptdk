@@ -2,8 +2,7 @@
 
 import os
 
-from flask import Flask, render_template
-#from flask.ext.assets import Environment, Bundle
+from flask import Flask
 
 
 def create_app(test_config=None):
@@ -13,11 +12,6 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
-
-    #assets = Environment(app)
-    #assets.url = app.static_url_path
-    #scss = Bundle('style.scss', filters='pyscss', output='all.css')
-    #assets.register('scss_all', scss)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

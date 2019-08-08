@@ -1,16 +1,20 @@
 import pytest
-from ptdk import g, session
-from ptdk.db import get_db
+import uuid
 
+from ptdk.training import check_metadata, config, generate
 
 
 @pytest.mark.parametrize(('galaxy_url', 'workflow_id', 'name', 'message'), (
-    ('', '', '', b'Galaxy URL is required.'),
-    ('usegalaxy.eu', '', '', b'Workflow id is required.'),
-    ('usegalaxy.eu', '20db0889', '', b'Name for tutorial is required.'),
-    ('usegalaxy.au', '20db0889', 'name', b'No API key for this Galaxy instance.'),
+    ('', '', '', 'Galaxy URL is required.'),
+    ('usegalaxy.eu', '', '', 'Workflow id is required.'),
+    ('usegalaxy.eu', '20db0889', '', 'Name for tutorial is required.'),
+    (
+        'usegalaxy.au',
+        '20db0889',
+        'name',
+        'No API key for this Galaxy instance.'),
 ))
-def test_login_validate_input(client, galaxy_url, workflow_id, name, message):
+def test_check_metadata(client, galaxy_url, workflow_id, name, message):
     tuto = {
         'uuid': str(uuid.uuid4())[:8],
         'name': name,
@@ -19,9 +23,26 @@ def test_login_validate_input(client, galaxy_url, workflow_id, name, message):
         'workflow_id': workflow_id,
         'zenodo': ''
     }
-    response = client.check_metadata(tuto)
-    assert message in response.data
+    response = check_metadata(tuto)
+    assert message in response
 
+
+@pytest.mark.parametrize(('workflow_id', 'message'), (
+    ('7ab70660e6235cf', 'The id of the workflow is malformed'),
+    ('0a413012fb825a5e', 'The workflow is not shared publicly'),
+))
+def test_generate(client, workflow_id, message):
+    tuto = {
+        'uuid': str(uuid.uuid4())[:8],
+        'name': 'name',
+        'title': '',
+        'galaxy_url': 'usegalaxy.eu',
+        'workflow_id': workflow_id,
+        'zenodo': '',
+        'api_key': config['usegalaxy.eu']['api_key']
+    }
+    response = generate(tuto)
+    assert message in response
 
 
 def test_index(client):
@@ -34,8 +55,11 @@ def test_index(client):
     assert b"Zenodo URL with the input data" in response.data
 
     response = client.post(
-        '/', 
-        data={'name': 'metatranscriptomics', 'title': '', 'galaxy_url': 'usegalaxy.eu', 'workflow_id': 'usegalaxy.eu', 'zenodo': ''})
+        '/',
+        data={
+            'name': 'metatranscriptomics',
+            'title': '',
+            'galaxy_url': 'usegalaxy.eu',
+            'workflow_id': '7ab70660e6235cf0',
+            'zenodo': ''})
     assert b"The skeleton of the tutorial has been generated" in response.data
-
-
