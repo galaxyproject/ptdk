@@ -8,6 +8,8 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
+        'planemo',
+        'bioblend'
     ],
     setup_requires=['libsass'],
     sass_manifests={
