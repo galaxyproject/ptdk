@@ -12,8 +12,6 @@ from flask import (
 from planemo import cli
 from planemo.training import Training
 
-from ptdk.db import get_db
-
 
 tuto = Blueprint('training', __name__)
 topic_dp = Path("topics") / "topic" / "tutorials"
@@ -131,18 +129,7 @@ def index():
         error = check_metadata(tuto)
 
         if error is None:
-            db = get_db()
             tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
-            db.execute(
-                ("INSERT INTO tutorials (uuid, name, galaxy_url, workflow_id) "
-                    "VALUES (?, ?, ?, ?)"),
-                (
-                    tuto['uuid'],
-                    tuto['name'],
-                    tuto['galaxy_url'],
-                    tuto['workflow_id'])
-            )
-            db.commit()
             zip_fp = generate(tuto)
             if ".zip" in str(zip_fp):
                 return render_template('training/index.html', zip_fp=zip_fp)
