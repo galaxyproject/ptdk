@@ -1,14 +1,17 @@
-import bioblend
 import os
 import shutil
 import uuid
+from pathlib import Path
+
+import bioblend
 
 from flask import (
     Blueprint, flash, render_template, request
 )
-from pathlib import Path
+
 from planemo import cli
 from planemo.training import Training
+
 from ptdk.db import get_db
 
 
@@ -18,15 +21,15 @@ topic_dp = Path("topics") / "topic" / "tutorials"
 config = {
     'usegalaxy.eu': {
         'url': 'https://usegalaxy.eu/',
-        'api_key': os.getenv('USEGALAXY_EU_APIKEY') 
+        'api_key': os.getenv('USEGALAXY_EU_APIKEY')
     },
     'usegalaxy.org.au': {
         'url': 'https://usegalaxy.org.au/',
-        'api_key': os.getenv('USEGALAXY_ORG_AU_APIKEY') 
+        'api_key': os.getenv('USEGALAXY_ORG_AU_APIKEY')
     },
     'usegalaxy.org': {
         'url': 'https://usegalaxy.org/',
-        'api_key': os.getenv('USEGALAXY_ORG_APIKEY') 
+        'api_key': os.getenv('USEGALAXY_ORG_APIKEY')
     }
 }
 

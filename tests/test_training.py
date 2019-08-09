@@ -1,7 +1,8 @@
-import pytest
 import uuid
 
 from ptdk.training import check_metadata, config, generate
+
+import pytest
 
 
 @pytest.mark.parametrize(('galaxy_url', 'workflow_id', 'name', 'message'), (

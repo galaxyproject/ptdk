@@ -1,7 +1,8 @@
 import sqlite3
 
-import pytest
 from ptdk.db import get_db
+
+import pytest
 
 
 def test_get_close_db(app):

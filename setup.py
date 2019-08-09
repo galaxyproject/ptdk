@@ -9,7 +9,8 @@ setup(
     install_requires=[
         'flask',
         'planemo',
-        'bioblend'
+        'bioblend',
+        'pytest'
     ],
     setup_requires=['libsass'],
     sass_manifests={
