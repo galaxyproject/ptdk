@@ -49,7 +49,6 @@ planemo==0.61.0
 pluggy==0.12.0
 prov==1.5.1
 psutil==5.6.3
--e git+git@github.com:bebatut/ptdk.git@dbd189cb0a41b5233e51ecae7a0e6f9bfc2560a1#egg=ptdk
 py==1.8.0
 pyaml==19.4.1
 pycodestyle==2.5.0
