@@ -54,6 +54,14 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
     $ make test
     ```
 
+## Deploy to Heroku
+
+- Deploy to Heroku
+
+    ```
+    $ git push heroku master
+    ```
+
 # How is it working?
 
 It uses:
