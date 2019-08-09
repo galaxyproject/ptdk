@@ -9,19 +9,50 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
 
 ## Prepare the environment
 
-- Create virtual environment: `make create-venv`
+- Create virtual environment:
+
+    ```
+    $ make create-venv
+    ```
 
 ## Run the server
 
-- Initiate the database (once): `make init-db`
-- Launch the server: `make run`
+- Initiate the database (once):
+
+    ```
+    $ make init-db
+    ```
+
+- Export the API for usegalaxy.eu, usegalaxy.org.au and usegalaxy.org.au as environment variables:
+
+    ```
+    $ export USEGALAXY_EU_APIKEY=<replace with correct API key>
+    $ export USEGALAXY_ORG_AU_APIKEY=<replace with correct API key>
+    $ export USEGALAXY_ORG_APIKEY=<replace with correct API key>
+    ```
+
+- Launch the server: 
+
+    ```
+    $ make run
+    ```
+
 - Browse it at [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 - Kill it with CTRL+C
 
 ## Run the tests
 
-- Install the requirements: `make setup`
-- Run the tests: `make test`
+- Install the requirements: 
+
+    ```
+    $ make setup
+    ```
+
+- Run the tests: 
+
+    ```
+    $ make test
+    ```
 
 # How is it working?
 
