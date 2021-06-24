@@ -7,6 +7,10 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
 
 # Usage
 
+## Requirement
+
+- virtualenv
+
 ## Prepare the environment
 
 - Create virtual environment:
