@@ -29,8 +29,8 @@ def test_check_metadata(client, galaxy_url, workflow_id, name, message):
 
 
 @pytest.mark.parametrize(('workflow_id', 'message'), (
-    ('7ab70660e6235cf', 'The id of the workflow is malformed'),
-    ('0a413012fb825a5e', 'The workflow is not shared publicly'),
+    ('7ab70660e6235cf', 'specified, unable to decode'),
+    ('58660160ca820fcb', 'The workflow is not shared publicly'),
 ))
 def test_generate(client, workflow_id, message):
     tuto = {
