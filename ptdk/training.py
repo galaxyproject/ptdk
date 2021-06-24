@@ -69,7 +69,7 @@ def generate(tuto):
     }
     train = Training(kwds)
 
-    ctx = cli.Context()
+    ctx = cli.PlanemoCliContext()
     ctx.planemo_directory = "/tmp/planemo-test-workspace"
 
     error = None
