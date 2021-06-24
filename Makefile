@@ -21,11 +21,13 @@ install: ## install into Python environment
 
 init-db: ## initiate the database
 	$(ACTIVATE_ENV) && \
+		export FLASK_APP=ptdk && \
 		flask init-db
 .PHONY: init-db	
 
 run: ## run the server locally
 	$(ACTIVATE_ENV) && \
+		export FLASK_APP=ptdk && \
 		flask run
 .PHONY: run
 
