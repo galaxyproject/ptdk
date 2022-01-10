@@ -3,3 +3,4 @@ planemo==0.74.9
 ephemeris==0.10.7
 Flask==2.0.1
 pyaml==20.4.0
+gunicorn==19.9.0
