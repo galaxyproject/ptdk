@@ -1,5 +1,5 @@
 bioblend==0.16.0
-planemo==0.74.4
+planemo==0.74.9
 ephemeris==0.10.7
 Flask==2.0.1
 pyaml==20.4.0
