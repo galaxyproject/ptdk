@@ -1,7 +1,7 @@
 ptdk: Web server to create tutorial skeleton from workflow
 ==========================================================
 
-[![CircleCI](https://circleci.com/gh/bebatut/ptdk/tree/master.svg?style=svg)](https://circleci.com/gh/bebatut/ptdk/tree/master)
+[![CircleCI](https://circleci.com/gh/bebatut/ptdk/tree/main.svg?style=svg)](https://circleci.com/gh/bebatut/ptdk/tree/main)
 
 It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Material from a public workflow on a public Galaxy instance.
 
@@ -35,7 +35,7 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
     $ export USEGALAXY_ORG_APIKEY=<replace with correct API key>
     ```
 
-- Launch the server: 
+- Launch the server:
 
     ```
     $ make run
@@ -46,13 +46,13 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
 
 ## Run the tests
 
-- Install the requirements: 
+- Install the requirements:
 
     ```
     $ make setup
     ```
 
-- Run the tests: 
+- Run the tests:
 
     ```
     $ make test
@@ -60,7 +60,7 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
 
 ## Deploy to Heroku (https://ptdk.herokuapp.com/)
 
-Automatically done when push to master
+Automatically done when push to main
 
 # How is it working?
 
