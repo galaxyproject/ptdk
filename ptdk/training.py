@@ -7,70 +7,72 @@ from pathlib import Path
 
 import bioblend
 
-from flask import (
-    Blueprint, flash, render_template, request
-)
+from flask import Blueprint, flash, render_template, request
 
 from planemo import cli
 from planemo.training import Training
+
 PTDK_DIRECTORY = os.getcwd()
+
 
 class PtdkException(Exception):
     pass
 
 
-tuto = Blueprint('training', __name__)
+tuto = Blueprint("training", __name__)
 topic_dp = Path("topics") / "topic" / "tutorials"
 
 config = {
-    'usegalaxy.eu': {
-        'url': 'https://usegalaxy.eu/',
-        'api_key': os.getenv('USEGALAXY_EU_APIKEY')
+    "usegalaxy.eu": {
+        "url": "https://usegalaxy.eu/",
+        "api_key": os.getenv("USEGALAXY_EU_APIKEY"),
     },
-    'usegalaxy.org.au': {
-        'url': 'https://usegalaxy.org.au/',
-        'api_key': os.getenv('USEGALAXY_ORG_AU_APIKEY')
+    "usegalaxy.org.au": {
+        "url": "https://usegalaxy.org.au/",
+        "api_key": os.getenv("USEGALAXY_ORG_AU_APIKEY"),
     },
-    'usegalaxy.org': {
-        'url': 'https://usegalaxy.org/',
-        'api_key': os.getenv('USEGALAXY_ORG_APIKEY')
-    }
+    "usegalaxy.org": {
+        "url": "https://usegalaxy.org/",
+        "api_key": os.getenv("USEGALAXY_ORG_APIKEY"),
+    },
 }
 
 
 def check_metadata(tuto):
-    '''Check the metadata for a tutorial'''
+    """Check the metadata for a tutorial"""
     error = None
-    if not tuto['galaxy_url']:
-        error = 'Galaxy URL is required.'
-    elif not tuto['workflow_id']:
-        error = 'Workflow id is required.'
-    elif not tuto['name']:
-        error = 'Name for tutorial is required.'
-    elif tuto['galaxy_url'] not in config:
-        error = 'No API key for this Galaxy instance.'
+    if not tuto["galaxy_url"]:
+        error = "Galaxy URL is required."
+    elif not tuto["workflow_id"]:
+        error = "Workflow id is required."
+    elif not tuto["name"]:
+        error = "Name for tutorial is required."
+    elif tuto["galaxy_url"] not in config:
+        error = "No API key for this Galaxy instance."
     return error
 
 
 def generate(tuto):
-    '''Generate skeleton of a tutorial'''
+    """Generate skeleton of a tutorial"""
     # Start by setting up a temporary workspace just for this request.
-    safe_tutorial_title = re.sub('[^a-z0-9-]*', '', re.sub(' ', '-', tuto['title'].lower()))
+    safe_tutorial_title = re.sub(
+        "[^a-z0-9-]*", "", re.sub(" ", "-", tuto["title"].lower())
+    )
     kwds = {
-        'topic_name': 'topic',
-        'topic_title': "New topic",
-        'topic_target': "use",
-        'topic_summary': "Topic summary",
-        'tutorial_name': tuto['name'],
-        'tutorial_title': tuto['title'],
-        'hands_on': True,
-        'slides': False,
-        'workflow_id': tuto['workflow_id'],
-        'zenodo_link': tuto['zenodo'],
-        'galaxy_url': tuto['galaxy_url'],
-        'galaxy_api_key': tuto['api_key'],
-        'workflow': None,
-        'datatypes': None
+        "topic_name": "topic",
+        "topic_title": "New topic",
+        "topic_target": "use",
+        "topic_summary": "Topic summary",
+        "tutorial_name": tuto["name"],
+        "tutorial_title": tuto["title"],
+        "hands_on": True,
+        "slides": False,
+        "workflow_id": tuto["workflow_id"],
+        "zenodo_link": tuto["zenodo"],
+        "galaxy_url": tuto["galaxy_url"],
+        "galaxy_api_key": tuto["api_key"],
+        "workflow": None,
+        "datatypes": None,
     }
     train = Training(kwds)
 
@@ -85,49 +87,52 @@ def generate(tuto):
             raise PtdkException(
                 "The id of the workflow is malformed "
                 "for the given Galaxy instance. "
-                "Please check it before trying again.")
+                "Please check it before trying again."
+            )
         elif "not owned by or shared with current user" in connect_error.body:
             raise PtdkException(
                 "The workflow is not shared publicly "
                 "on the given Galaxy instance. "
-                "Please share it before trying again.")
+                "Please share it before trying again."
+            )
         else:
             raise PtdkException(connect_error.body)
 
-    tuto_dp = topic_dp / Path("%s" % tuto['name'])
-    tuto_fp = tuto_dp / Path('tutorial.md')
+    tuto_dp = topic_dp / Path("%s" % tuto["name"])
+    tuto_fp = tuto_dp / Path("tutorial.md")
 
     if not tuto_fp.is_file():
         raise PtdkException(
             "The tutorial file was not generated. "
             "The workflow may have some errors. "
-            "Please check it before trying again.")
+            "Please check it before trying again."
+        )
 
     zip_fn = f"ptdk-{safe_tutorial_title}-{tuto['workflow_id']}-{tuto['uuid']}"
-    shutil.make_archive(Path(zip_fn), 'zip', tuto_dp)
+    shutil.make_archive(Path(zip_fn), "zip", tuto_dp)
     return zip_fn + ".zip"
 
 
-@tuto.route('/', methods=('GET', 'POST'))
+@tuto.route("/", methods=("GET", "POST"))
 def index():
-    '''Get tutorial attributes'''
-    if request.method == 'POST':
+    """Get tutorial attributes"""
+    if request.method == "POST":
         tuto = {
-            'uuid': str(uuid.uuid4())[:8],
-            'name': request.form['name'],
-            'title': request.form['title'],
-            'galaxy_url': request.form['galaxy_url'],
-            'workflow_id': request.form['workflow_id'],
-            'zenodo': request.form['zenodo']
+            "uuid": str(uuid.uuid4())[:8],
+            "name": request.form["name"],
+            "title": request.form["title"],
+            "galaxy_url": request.form["galaxy_url"],
+            "workflow_id": request.form["workflow_id"],
+            "zenodo": request.form["zenodo"],
         }
         print(tuto)
         error = check_metadata(tuto)
 
         if error is not None:
             flash(error)
-            return render_template('training/index.html')
+            return render_template("training/index.html")
 
-        tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
+        tuto["api_key"] = config[tuto["galaxy_url"]]["api_key"]
         with tempfile.TemporaryDirectory() as twd:
             output_path = None
             try:
@@ -138,19 +143,16 @@ def index():
                 zip_fn = generate(tuto)
 
                 # Here's where we want the final output to go.
-                output_name = Path('static') / Path(zip_fn)
-                output_path = Path(PTDK_DIRECTORY) / Path('ptdk') / output_name
+                output_name = Path("static") / Path(zip_fn)
+                output_path = Path(PTDK_DIRECTORY) / Path("ptdk") / output_name
                 print(zip_fn, output_path)
-                shutil.move(
-                    Path(twd) / Path(zip_fn),
-                    output_path
-                )
+                shutil.move(Path(twd) / Path(zip_fn), output_path)
             except PtdkException as err:
                 flash(err)
-                return render_template('training/index.html')
+                return render_template("training/index.html")
             finally:
                 os.chdir(PTDK_DIRECTORY)
 
-            return render_template('training/index.html', zip_fp=output_name)
+            return render_template("training/index.html", zip_fp=output_name)
 
-    return render_template('training/index.html')
+    return render_template("training/index.html")
