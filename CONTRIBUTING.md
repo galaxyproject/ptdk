@@ -15,7 +15,7 @@ Before starting, you should read, agree to, and follow these three things:
 
 ### Report Bugs
 
-Report bugs at: https://github.com/bebatut/ptdk/issues/new.
+Report bugs at: https://github.com/galaxyproject/ptdk/issues/new.
 
 When reporting a bug, please include:
 
@@ -28,7 +28,7 @@ problem, and (hopefully) fix it.
 
 ### Fix Bugs
 
-Check out the [open bugs](https://github.com/bebatut/ptdk/issues) -
+Check out the [open bugs](https://github.com/galaxyproject/ptdk/issues) -
 anything tagged with the **[easy pick]** label could be a good choice for
 newcomers (and we are willing to help you).
 
@@ -49,7 +49,7 @@ Any issue with the **[question]** label is open for feedback, so feel free to
 share your thoughts with us!
 
 The best way to send feedback is to [create a new
-issue](https://github.com/bebatut/ptdk/issues/new) on GitHub.
+issue](https://github.com/galaxyproject/ptdk/issues/new) on GitHub.
 
 If you are proposing a feature:
 
