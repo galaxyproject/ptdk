@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import uuid
 from pathlib import Path
@@ -51,6 +52,7 @@ def generate(tuto):
     shutil.rmtree('topics', ignore_errors=True)
     shutil.rmtree('metadata', ignore_errors=True)
 
+    safe_tutorial_title = re.sub('[^a-z0-9-]*', '', re.sub(' ', '-', tuto['title'].lower()))
     kwds = {
         'topic_name': 'topic',
         'topic_title': "New topic",
@@ -98,7 +100,7 @@ def generate(tuto):
             "The workflow may have some errors. "
             "Please check it before trying again.")
 
-    zip_fn = "%s" % (tuto['uuid'])
+    zip_fn = f"ptdk-{safe_tutorial_title}-{tuto['workflow_id']}-{tuto['uuid']}"
     shutil.make_archive(Path(zip_fn), 'zip', tuto_dp)
 
     zip_fp = Path('static') / Path("%s.zip" % zip_fn)
