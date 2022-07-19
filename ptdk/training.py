@@ -1,4 +1,5 @@
 import os
+import tempfile
 import re
 import shutil
 import uuid
@@ -12,6 +13,10 @@ from flask import (
 
 from planemo import cli
 from planemo.training import Training
+PTDK_DIRECTORY = os.getcwd()
+
+class PtdkException(Exception):
+    pass
 
 
 tuto = Blueprint('training', __name__)
@@ -49,9 +54,7 @@ def check_metadata(tuto):
 
 def generate(tuto):
     '''Generate skeleton of a tutorial'''
-    shutil.rmtree('topics', ignore_errors=True)
-    shutil.rmtree('metadata', ignore_errors=True)
-
+    # Start by setting up a temporary workspace just for this request.
     safe_tutorial_title = re.sub('[^a-z0-9-]*', '', re.sub(' ', '-', tuto['title'].lower()))
     kwds = {
         'topic_name': 'topic',
@@ -79,37 +82,30 @@ def generate(tuto):
     except bioblend.ConnectionError as connect_error:
         print(connect_error)
         if "Malformed id" in connect_error.body:
-            return (
+            raise PtdkException(
                 "The id of the workflow is malformed "
                 "for the given Galaxy instance. "
                 "Please check it before trying again.")
         elif "not owned by or shared with current user" in connect_error.body:
-            return (
+            raise PtdkException(
                 "The workflow is not shared publicly "
                 "on the given Galaxy instance. "
                 "Please share it before trying again.")
         else:
-            return connect_error.body
+            raise PtdkException(connect_error.body)
 
     tuto_dp = topic_dp / Path("%s" % tuto['name'])
     tuto_fp = tuto_dp / Path('tutorial.md')
 
     if not tuto_fp.is_file():
-        return (
+        raise PtdkException(
             "The tutorial file was not generated. "
             "The workflow may have some errors. "
             "Please check it before trying again.")
 
     zip_fn = f"ptdk-{safe_tutorial_title}-{tuto['workflow_id']}-{tuto['uuid']}"
     shutil.make_archive(Path(zip_fn), 'zip', tuto_dp)
-
-    zip_fp = Path('static') / Path("%s.zip" % zip_fn)
-    shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
-
-    shutil.rmtree('topics', ignore_errors=True)
-    shutil.rmtree('metadata', ignore_errors=True)
-
-    return zip_fp
+    return zip_fn + ".zip"
 
 
 @tuto.route('/', methods=('GET', 'POST'))
@@ -127,14 +123,34 @@ def index():
         print(tuto)
         error = check_metadata(tuto)
 
-        if error is None:
-            tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
-            zip_fp = generate(tuto)
-            if ".zip" in str(zip_fp):
-                return render_template('training/index.html', zip_fp=zip_fp)
-            else:
-                error = zip_fp
+        if error is not None:
+            flash(error)
+            return render_template('training/index.html')
 
-        flash(error)
+        tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
+        with tempfile.TemporaryDirectory() as twd:
+            output_path = None
+            try:
+                # Move into the temp directory for maximum safety
+                os.chdir(twd)
+                # All of the subsequent file generation is done in there.
+                # We get back a filename (relative to twd)
+                zip_fn = generate(tuto)
+
+                # Here's where we want the final output to go.
+                output_name = Path('static') / Path(zip_fn)
+                output_path = Path(PTDK_DIRECTORY) / Path('ptdk') / output_name
+                print(zip_fn, output_path)
+                shutil.move(
+                    Path(twd) / Path(zip_fn),
+                    output_path
+                )
+            except PtdkException as err:
+                flash(err)
+                return render_template('training/index.html')
+            finally:
+                os.chdir(PTDK_DIRECTORY)
+
+            return render_template('training/index.html', zip_fp=output_name)
 
     return render_template('training/index.html')
