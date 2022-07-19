@@ -9,6 +9,7 @@
         All steps of the workflow will be listed with the tool and its parameters. 
         If a Zenodo URL is provided, the links to the data there will be added to the tutorial.
     </p>
+    {% if not zip_fp %}
     <form method="post">
         <div class="field">
             <label for="name" class="label">Tutorial name</label>
@@ -59,16 +60,19 @@
             </div>
         </div>
     </form>
+    {% endif %}
 
     {% if zip_fp %}
-    <h1><i class="fas fa-grin-stars"></i>
+    <h1>🤩
         The skeleton of the tutorial has been generated.
     </h1>
 
     <p>You can now add it to the <a href="https://training.galaxyproject.org/">Galaxy Training Material</a>!</p>
 
     <ul>
-        <li>Download the <a href="{{ zip_fp }}"><i class="fas fa-file-archive"></i> generated archive with the tutorial skeleton</a> including:
+        <li>
+            <a class="button is-primary" href="{{ zip_fp }}"><i class="fas fa-file-archive"></i>Download the  generated archive with the tutorial skeleton</a>
+            including:
             <ul>
                 <li>tutorial content, <code>tutorial.md</code> file, filled with all steps from the workflow and their parameters</li>
                 <li>its workflow (<code>workflow</code> folder)</li>
