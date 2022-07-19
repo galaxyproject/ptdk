@@ -88,15 +88,15 @@ def generate(tuto):
                 "The id of the workflow is malformed "
                 "for the given Galaxy instance. "
                 "Please check it before trying again."
-            )
-        elif "not owned by or shared with current user" in connect_error.body:
+            ) from connect_error
+        if "not owned by or shared with current user" in connect_error.body:
             raise PtdkException(
                 "The workflow is not shared publicly "
                 "on the given Galaxy instance. "
                 "Please share it before trying again."
-            )
-        else:
-            raise PtdkException(connect_error.body)
+            ) from connect_error
+
+        raise connect_error
 
     tuto_dp = topic_dp / Path("%s" % tuto["name"])
     tuto_fp = tuto_dp / Path("tutorial.md")
@@ -147,7 +147,7 @@ def index():
                 output_path = Path(PTDK_DIRECTORY) / Path("ptdk") / output_name
                 print(zip_fn, output_path)
                 shutil.move(Path(twd) / Path(zip_fn), output_path)
-            except PtdkException as err:
+            except (PtdkException, bioblend.ConnectionError) as err:
                 flash(err)
                 return render_template("training/index.html")
             finally:
