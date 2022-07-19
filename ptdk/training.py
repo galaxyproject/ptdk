@@ -129,6 +129,7 @@ def index():
         error = check_metadata(tuto)
 
         if error is None:
+            print(tuto)
             tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
             zip_fp = generate(tuto)
             if ".zip" in str(zip_fp):
