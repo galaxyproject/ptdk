@@ -117,7 +117,7 @@ def generate(tuto):
 def index():
     """Get tutorial attributes"""
     if request.method == "POST":
-        tuto = {
+        tuto_metadata = {
             "uuid": str(uuid.uuid4())[:8],
             "name": request.form["name"],
             "title": request.form["title"],
@@ -125,14 +125,14 @@ def index():
             "workflow_id": request.form["workflow_id"],
             "zenodo": request.form["zenodo"],
         }
-        print(tuto)
-        error = check_metadata(tuto)
+        print(tuto_metadata)
+        error = check_metadata(tuto_metadata)
 
         if error is not None:
             flash(error)
             return render_template("training/index.html")
 
-        tuto["api_key"] = config[tuto["galaxy_url"]]["api_key"]
+        tuto_metadata["api_key"] = config[tuto_metadata["galaxy_url"]]["api_key"]
         with tempfile.TemporaryDirectory() as twd:
             output_path = None
             try:
@@ -140,7 +140,7 @@ def index():
                 os.chdir(twd)
                 # All of the subsequent file generation is done in there.
                 # We get back a filename (relative to twd)
-                zip_fn = generate(tuto)
+                zip_fn = generate(tuto_metadata)
 
                 # Here's where we want the final output to go.
                 output_name = Path("static") / Path(zip_fn)
