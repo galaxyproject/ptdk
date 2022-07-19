@@ -72,46 +72,42 @@ def generate(tuto):
     ctx = cli.PlanemoCliContext()
     ctx.planemo_directory = "/tmp/planemo-test-workspace"
 
-    error = None
     try:
         train.init_training(ctx)
     except bioblend.ConnectionError as connect_error:
         print(connect_error)
         if "Malformed id" in connect_error.body:
-            error = (
+            return (
                 "The id of the workflow is malformed "
                 "for the given Galaxy instance. "
                 "Please check it before trying again.")
         elif "not owned by or shared with current user" in connect_error.body:
-            error = (
+            return (
                 "The workflow is not shared publicly "
                 "on the given Galaxy instance. "
                 "Please share it before trying again.")
         else:
-            error = connect_error.body
+            return connect_error.body
 
     tuto_dp = topic_dp / Path("%s" % tuto['name'])
     tuto_fp = tuto_dp / Path('tutorial.md')
 
-    if error is None and not tuto_fp.is_file():
-        error = (
+    if not tuto_fp.is_file():
+        return (
             "The tutorial file was not generated. "
             "The workflow may have some errors. "
             "Please check it before trying again.")
 
-    if error is None:
-        zip_fn = "%s" % (tuto['uuid'])
-        shutil.make_archive(Path(zip_fn), 'zip', tuto_dp)
+    zip_fn = "%s" % (tuto['uuid'])
+    shutil.make_archive(Path(zip_fn), 'zip', tuto_dp)
 
-        zip_fp = Path('static') / Path("%s.zip" % zip_fn)
-        shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
+    zip_fp = Path('static') / Path("%s.zip" % zip_fn)
+    shutil.move("%s.zip" % zip_fn, Path('ptdk') / zip_fp)
 
-        shutil.rmtree('topics', ignore_errors=True)
-        shutil.rmtree('metadata', ignore_errors=True)
+    shutil.rmtree('topics', ignore_errors=True)
+    shutil.rmtree('metadata', ignore_errors=True)
 
-        return zip_fp
-
-    return error
+    return zip_fp
 
 
 @tuto.route('/', methods=('GET', 'POST'))
@@ -126,10 +122,10 @@ def index():
             'workflow_id': request.form['workflow_id'],
             'zenodo': request.form['zenodo']
         }
+        print(tuto)
         error = check_metadata(tuto)
 
         if error is None:
-            print(tuto)
             tuto['api_key'] = config[tuto['galaxy_url']]['api_key']
             zip_fp = generate(tuto)
             if ".zip" in str(zip_fp):
