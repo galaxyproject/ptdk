@@ -42,17 +42,18 @@ def test_generate(client, workflow_id, message):
         'zenodo': '',
         'api_key': config['usegalaxy.eu']['api_key']
     }
-    response = generate(tuto)
-    assert message in response
+    with pytest.raises(Exception) as e_info:
+        response = generate(tuto)
+        assert message in e_info
 
 
 def test_index(client):
     response = client.get('/')
     assert b"Generate skeleton for a new Galaxy tutorial" in response.data
-    assert b"Tutorial name" in response.data
+    assert b"Folder name" in response.data
     assert b"Tutorial title" in response.data
     assert b"Galaxy instance with the public workflow" in response.data
-    assert b"Id of the workflow" in response.data
+    assert b"ID of the workflow" in response.data
     assert b"Zenodo URL with the input data" in response.data
 
     response = client.post(
@@ -63,4 +64,5 @@ def test_index(client):
             'galaxy_url': 'usegalaxy.eu',
             'workflow_id': '7ab70660e6235cf0',
             'zenodo': ''})
+
     assert b"The skeleton of the tutorial has been generated" in response.data
