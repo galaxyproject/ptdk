@@ -1,0 +1,32 @@
+name: Deploy
+
+concurrency:
+  group: ci-${{ github.head_ref }}
+  cancel-in-progress: false
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # nightly builds to keep in sync with changes to the video library
+    - cron:  '0 0 * * *'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Deploy 🚀
+        run: |
+            git remote add dokku dokku@apps.galaxyproject.eu:ptdk
+            git push dokku main
