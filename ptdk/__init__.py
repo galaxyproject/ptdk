@@ -5,6 +5,9 @@ import os
 from flask import Flask
 
 from . import training
+from . import git
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def create_app(test_config=None):
@@ -20,6 +23,9 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
+
+    app.config['GIT_COMMIT'] = git.get_commit_id(BASE_DIR)
+    app.config['GIT_COMMIT_SHORT'] = git.get_commit_id(BASE_DIR)[0:8]
 
     # ensure the instance folder exists
     try:
