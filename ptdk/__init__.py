@@ -29,7 +29,7 @@ def create_app(test_config=None):
         app.config['GIT_COMMIT_SHORT'] = git.get_commit_id(BASE_DIR)[0:8]
     except FileNotFoundError:
         app.config['GIT_COMMIT'] = os.environ.get('GIT_REV', 'main')
-        app.config['GIT_COMMIT_SHORT'] = app.config['GIT_COMMIT']
+        app.config['GIT_COMMIT_SHORT'] = app.config['GIT_COMMIT'][0:8]
 
     # ensure the instance folder exists
     try:
