@@ -134,7 +134,7 @@ def index():
 
         if error is not None:
             flash(error)
-            return render_template("training/index.html")
+            return render_template("training/index.html", servers=config.keys())
 
         tuto_metadata["api_key"] = config[tuto_metadata["galaxy_url"]]["api_key"]
         with tempfile.TemporaryDirectory() as twd:
@@ -153,10 +153,10 @@ def index():
                 shutil.move(Path(twd) / Path(zip_fn), output_path)
             except (PtdkException, bioblend.ConnectionError) as err:
                 flash(err)
-                return render_template("training/index.html")
+                return render_template("training/index.html", servers=config.keys())
             finally:
                 os.chdir(PTDK_DIRECTORY)
 
-            return render_template("training/index.html", zip_fp=output_name)
+            return render_template("training/index.html", zip_fp=output_name, servers=config.keys())
 
-    return render_template("training/index.html")
+    return render_template("training/index.html", servers=config.keys())

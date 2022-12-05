@@ -23,6 +23,7 @@ It uses Planemo to create the skeleton of a tutorial  for Galaxy Training Materi
 
     ```
     $ export USEGALAXY_EU_APIKEY=<replace with correct API key>
+    $ export USEGALAXY_FR_APIKEY=<replace with correct API key>
     $ export USEGALAXY_ORG_AU_APIKEY=<replace with correct API key>
     $ export USEGALAXY_ORG_APIKEY=<replace with correct API key>
     ```

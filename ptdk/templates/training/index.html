@@ -31,9 +31,9 @@
             <div class="control">
                 <div class="select">
                     <select name="galaxy_url">
-                        <option>usegalaxy.eu</option>
-                        <option>usegalaxy.org</option>
-                        <option>usegalaxy.org.au</option>
+                        {% for server in servers %}
+                        <option>{{ server }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
