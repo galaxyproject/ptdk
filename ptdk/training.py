@@ -35,6 +35,10 @@ config = {
         "url": "https://usegalaxy.org/",
         "api_key": os.getenv("USEGALAXY_ORG_APIKEY"),
     },
+    "usegalaxy.fr": {
+        "url": "https://usegalaxy.fr/",
+        "api_key": os.getenv("USEGALAXY_FR_APIKEY"),
+    },
 }
 
 
