@@ -25,7 +25,7 @@ jobs:
           config: |
             Host apps.galaxyproject.eu
               User dokku
-              Port 8080
+              Port 3022
               Hostname traefik.galaxyproject.eu
 
       - name: Deploy 🚀
