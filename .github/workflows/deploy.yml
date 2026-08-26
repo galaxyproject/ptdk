@@ -24,8 +24,9 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
           config: |
             Host apps.galaxyproject.eu
-            	User dokku
-            	Port 8080
+              User dokku
+              Port 8080
+              Hostname traefik.galaxyproject.eu
 
       - name: Deploy 🚀
         run: |
