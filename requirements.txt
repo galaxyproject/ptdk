@@ -4,4 +4,4 @@ Flask==2.3.2
 gunicorn==19.9.0
 planemo==0.75.2
 pyaml==20.4.0
-Werkzeug==2.2.2
+Werkzeug==3.1.9
