@@ -1,7 +1,7 @@
 name: Python package
 
 on: [pull_request]
-
+permissions: {}
 jobs:
   build:
 
@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
