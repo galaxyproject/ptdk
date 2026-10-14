@@ -1,7 +1,7 @@
 bioblend==0.18.0
 ephemeris==0.10.7
 Flask==2.3.2
-gunicorn==19.9.0
+gunicorn==22.0.0
 planemo==0.75.2
 pyaml==20.4.0
 Werkzeug==2.2.2
