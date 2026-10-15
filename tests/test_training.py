@@ -43,7 +43,7 @@ def test_generate(client, workflow_id, message):
         'api_key': config['usegalaxy.eu']['api_key']
     }
     with pytest.raises(Exception) as e_info:
-        response = generate(tuto)
+        generate(tuto)
         assert message in e_info
 
 
